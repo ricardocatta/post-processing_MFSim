@@ -188,8 +188,24 @@ def mean_squared_error(y, n):
     Retorna a soma do erro quadrático médio.
     """
     mean_squared_error1 = (y - mean(y, n)) ** 2
-    mean_squared_error1 = np.sum(mean_squared_error1)
+    mean_squared_error1 = np.sum(mean_squared_error1) / len(y)
     return np.round(mean_squared_error1, n)
+
+def root_mean_squared_error(y, n):
+    """
+    Calcula a raiz quadrada do erro quadrático médio.
+
+    INPUT:
+
+    - y = o vetor/lista y;
+    - n = o número de casas decimais.
+
+    OUTPUT:
+
+    Retorna a raiz quadrada do erro quadrático médio.
+    """
+    y = np.sqrt(mean_squared_error(y, n))
+    return np.round(y, n)
 
 def erro_regressao(y, y1, n):
     """
@@ -207,3 +223,22 @@ def erro_regressao(y, y1, n):
     """
     erro = squared_error(y, y1, n) / mean_squared_error(y, n)
     return np.round(erro, n)
+
+def relative_error(y1, y2, n):
+    """
+    Calcula o erro relativo.
+
+    INPUT:
+
+    - y1 = o vetor/lista y1 computacional;
+    - y2 = o vetor/lista y1 experimental;
+    - n = o número de casas decimais.
+
+    OUTPUT:
+
+    Retorna o erro relativo em porcentagem.
+    """
+
+    er = np.abs(y1 - y2) / y2
+
+    return np.round(er, n)

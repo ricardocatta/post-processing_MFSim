@@ -1,7 +1,10 @@
+from cProfile import label
 import matplotlib.pylab as plt
 from matplotlib.font_manager import FontProperties
 import numpy as np
 from numpy import fft
+from scipy.optimize import curve_fit
+from scipy.special import expit
 import pandas as pd
 import statistical_module as sm
 
@@ -34,10 +37,10 @@ def plot_mean_vel(x, vel, dt, rho, dataframe, exp_w_mean):
     x_paraview = dataframe.x_comp * (1.0 /0.15)
     y_paraview = dataframe.w_average
 
-    rho_paraview = dataframe.density_average
-    w_paraview = []
-    for i in range(29):
-        w_paraview.append(np.sum((y_paraview[i] * rho_paraview[i])) / np.sum(rho_paraview[i])) # média de ponderada pelo dt.
+    #rho_paraview = dataframe.density_average
+    #w_paraview = []
+    #for i in range(29):
+    #    w_paraview.append(np.sum((y_paraview[i] * rho_paraview[i])) / np.sum(rho_paraview[i])) # média de ponderada pelo dt.
 
     x_exp = exp_w_mean.x1_exp
     y_exp = exp_w_mean.mean_w_exp
@@ -46,9 +49,9 @@ def plot_mean_vel(x, vel, dt, rho, dataframe, exp_w_mean):
 
     plt.style.use('ggplot')
         
-    fig = plt.figure(figsize=(10.0, 4.0))
+    fig = plt.figure(dpi=350)
     axes1 = fig.add_subplot(1, 1, 1)
-    axes1.set_ylabel('mean_dpm_w')
+    axes1.set_ylabel('mean_w')
     axes1.set_xlabel('x / L')
         
     x0 = np.array(x)                                # adimensionalizando a coordenada x
@@ -78,13 +81,35 @@ def plot_mean_vel(x, vel, dt, rho, dataframe, exp_w_mean):
     print("favre_num é = ", favre_num)
     print("favre_den é = ", favre_den)
     
-    plt.plot(x2, y3, '-', label="Smag Cs = 0.15")
-    #plt.plot(x2, y3 , 'o', label="Smag Cs = 0.15 (com favre)")
-    #plt.plot(x_paraview, w_paraview, '--', label="Smag Cs = 0.15 (paraview)")
+    plt.plot(x2, y3, '-', label="Smagorinsky, Cs = 0.15")
+    #plt.plot(x2, y3 , 'o', label="Smagorinsky, Cs = 0.15 (com favre)")
+    #plt.plot(x_paraview, w_paraview, '--', label="Smagorinsky, Cs = 0.15 (paraview)")
     plt.plot(x_exp, y_exp, '*', color="green", label="Experimental")
     plt.legend(loc='best')
     fig.tight_layout()
     plt.show()
+
+    #x_exp1 = np.log(x_exp)
+    #y_exp1 = np.log(y_exp)
+#
+    #x21 = np.log(x2[2:])
+    #y31 = np.log(y3[2:])
+
+    a, b = sm.least_square(x_exp, y_exp, 3)
+    y3 =  y3[2:-1] * 1.0 / np.max(y_exp)
+    a1, b1 = sm.least_square(x2[2:-1], y3, 3)
+
+    y_exp = a * x_exp + b
+    y3 = a1 * x2 + b1
+    print("a = ", a)
+    print("b = ", b)
+
+    print("a1 = ", a1)
+    print("b1 = ", b1)
+    plt.plot(x_exp, y_exp, 'o', label="Experimental")
+    plt.plot(x2, y3, '-', label="MFSim")
+    plt.show()
+    return x2, y3, x_exp, y_exp
 
 def plot_std_ke(x, u, v, w, dt, rho, dataframe, exp_ke_std):
     """
@@ -126,9 +151,9 @@ def plot_std_ke(x, u, v, w, dt, rho, dataframe, exp_ke_std):
 
     plt.style.use('ggplot')
         
-    fig = plt.figure(figsize=(10.0, 4.0))
+    fig = plt.figure(dpi=350)
     axes1 = fig.add_subplot(1, 1, 1)
-    axes1.set_ylabel('std_ke')
+    axes1.set_ylabel('ke')
     axes1.set_xlabel('x / L')
         
     x0 = np.array(x)                                # adimensionalizando a coordenada x
@@ -152,15 +177,18 @@ def plot_std_ke(x, u, v, w, dt, rho, dataframe, exp_ke_std):
     print("y3 é = ", y3)
 
     
-    plt.plot(x2, y1 , '-', label="Smag Cs = 0.15")
-    #plt.plot(x2, y3 , 'o', label="Smag Cs = 0.15 (com favre)")
-    #plt.plot(x_parav, y_parav, '--', label="Smag Cs = 0.15 (paraview)")
+    plt.plot(x2, y1 , '-', label="Smagorinsky, Cs = 0.15")
+    #plt.plot(x2, y3 , 'o', label="Smagorinsky, Cs = 0.15 (com favre)")
+    #plt.plot(x_parav, y_parav, '--', label="Smagorinsky, Cs = 0.15 (paraview)")
     plt.plot(x_exp, y_exp, '*', color="green", label="Experimental")
     plt.legend(loc='best')
     fig.tight_layout()
     plt.show()
-    return y1
+    return x2, y1, x_exp, y_exp
 
+def sigmoid(x, Beta_1, Beta_2):
+     y = 1 / (1 + np.exp(-Beta_1*(x-Beta_2)))
+     return y
 
 def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
     """
@@ -208,7 +236,7 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
 
         plt.style.use('ggplot')
 
-        fig = plt.figure(figsize=(10.0, 4.0))
+        fig = plt.figure(dpi=350)
         axes1 = fig.add_subplot(1, 1, 1)
         axes1.set_ylabel('std_u')
         axes1.set_xlabel('x / L')
@@ -225,9 +253,9 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
 
         print("x2 = ", x2)
 
-        plt.plot(x2, y1 , '-', label="Smag Cs = 0.15")
-        #plt.plot(x2, y3 , 'o', label="Smag Cs = 0.15 (com favre)")
-        #plt.plot(x_paraview, y_paraview, '--', label="Smag Cs = 0.15 (paraview)")
+        plt.plot(x2, y1 , '-', label="Smagorinsky, Cs = 0.15")
+        #plt.plot(x2, y3 , 'o', label="Smagorinsky, Cs = 0.15 (com favre)")
+        #plt.plot(x_paraview, y_paraview, '--', label="Smagorinsky, Cs = 0.15 (paraview)")
         plt.plot(x_exp, y_exp, '*', color="green", label="Experimental")
         plt.legend(loc='best')
         fig.tight_layout()
@@ -263,7 +291,7 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
 
         plt.style.use('ggplot')
 
-        fig = plt.figure(figsize=(10.0, 4.0))
+        fig = plt.figure(dpi=350)
         axes1 = fig.add_subplot(1, 1, 1)
         axes1.set_ylabel('std_w')
         axes1.set_xlabel('x / L')
@@ -279,14 +307,20 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
             x2[i] = np.mean(x1[i])
 
         print("x2 = ", x2)
+        
+        #popt, pcov = curve_fit(sigmoid, x_exp, y_exp)
 
-        plt.plot(x2, y1 , '-', label="Smag Cs = 0.15")
-        #plt.plot(x2, y3 , 'o', label="Smag Cs = 0.15 (com favre)")
-        #plt.plot(x_paraview, y_paraview, '--', label="Smag Cs = 0.15 (paraview)")
+
+        plt.plot(x2, y1 , '-', label="Smagorinsky, Cs = 0.15")
+        #plt.plot(x2, y3 , 'o', label="Smagorinsky, Cs = 0.15 (com favre)")
+        #plt.plot(x_paraview, y_paraview, '--', label="Smagorinsky, Cs = 0.15 (paraview)")
         plt.plot(x_exp, y_exp, '*', color="green", label="Experimental")
+        #y_fit = sigmoid(x_exp, *popt)
+        #plt.plot(x_exp,y_fit, linewidth=3.0, label='fit')
         plt.legend(loc='best')
         fig.tight_layout()
         plt.show()
+        return x2, y1, x_exp, y_exp
 
     
 
@@ -312,17 +346,16 @@ def espectro(t,xc,u,v,w):
     wl = w - np.mean(w)    # Calcula a flutuação da velocidade w  
 
     Enel = (ul * ul + vl * vl + wl * wl) / 2  
-
+    print(" Enel antes= ", Enel)
     contUl = 0
-    for i in u:
+    for i in ul:
         if contUl<45:
             Enel[contUl] = Enel[contUl]*np.sin(contUl*2*np.pi/180)
         if (contUl>(len(xc)-46)):
             Enel[contUl] = Enel[contUl]*np.sin((2*(45 + contUl - (len(xc)-46)))*np.pi/180)
         contUl = contUl + 1
-
     print(" contUl = ", contUl)
-
+    print(" Enel depois= ", Enel)
     yl = Enel
     nl = len(yl)
     kl = np.arange(nl)
@@ -347,10 +380,13 @@ def plot_spectral_density():
     font.set_family('serif')
 
     x1R = 1
-    x2R = 100000
+    x2R = 1000000
     xR = np.arange(x1R,x2R,10)
-    yR = np.exp((-5.0/3.0)*np.log(xR))*1000000000
-    yRl = np.exp((-25.0/3.0)*np.log(xR))* (10 ** 34)
+    #yR = (-5.0/3.0) * xR
+    #yRl = (-25.0/3.0) * xR
+    yR = 10 ** ((-5.0/3.0)*np.log10(xR))*1000000000
+    yRl = 10 ** ((-25.0/3.0)*np.log10(xR))* (10 ** 34)
+    #yRl = 10 ** ((-25.0/3.0)*np.log10(xR))* (10 ** 34)
 
     dir = [""]
     probe = ["surf00001_sonda00017.dat"]    # Escolha da probe
@@ -390,21 +426,31 @@ def plot_spectral_density():
 
     plt.figure()
     print(len(ept_kinetic))
+    #frec = np.log10(ept_kinetic[i][1])
+    #E_d = np.log10(abs(ept_kinetic[i][0]))
+    frec = ept_kinetic[i][1]
+    E_d = abs(ept_kinetic[i][0])
+    print("frec = ", frec)
+    print("E_d = ", E_d)
+    print("len frec = ", len(frec))
 
     for i in range(len(ept_kinetic)):
 
-        plt.xlabel('$\log{f}$ [Hz]', fontsize=19, fontproperties=font)
-        plt.ylabel('$\log{E(f)}$', fontsize=19, fontproperties=font)
-        plt.loglog(ept_kinetic[i][1],abs(ept_kinetic[i][0]),color='red',linewidth=0.8)
+        plt.xlabel('${f}$ [Hz]', fontsize=19, fontproperties=font)
+        plt.ylabel('${E(f)}$', fontsize=19, fontproperties=font)
+        plt.loglog(frec[0:50000], E_d[0:50000], color='red',linewidth=0.8)
         plt.loglog(xR,yR,'--',color='black',linewidth=1.5, label='$m = -5/3$')
         plt.loglog(xR,yRl,'--',color='green',linewidth=1.5, label='$m = -25/3$')
-
-
+        #plt.loglog(frec[50000],E_d,'--',color='blue',linewidth=1.5, label='$m = -25/3$')
+#
     ax= plt.gca()	
-    ax.set_xlim([1,100000])
-    ax.set_ylim([0.00001,10000000])	
+    #ax.set_xlim([1,10000000])
+    #ax.set_ylim([0.00000000001,10000000])	
+    ax.set_xlim([1,500000])
+    ax.set_ylim([0.00000000001,10000000])
     ax.legend(title='Coeficiente Angular')
     plt.title('Densidade Espectral de Energia Cinética Turbulenta')	
     plt.grid()
     plt.savefig('Espectro_final.png', format='png', dpi=350)
     plt.show()
+    return ept_kinetic[i][1], abs(ept_kinetic[i][0])

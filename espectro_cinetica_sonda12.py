@@ -136,7 +136,7 @@ for i in range(len(ept_kinetic)):
 ax= plt.gca()
 #ax.set_xlim([1,10000])
 #ax.set_ylim([0.1,10000000])	
-ax.set_xlim([1,100000])
+ax.set_xlim([1,10000])
 ax.set_ylim([0.00001,10000000])	
 ax.legend(title='Coeficiente Angular')
 plt.title('Densidade Espectral de Energia Cinética Turbulenta')	

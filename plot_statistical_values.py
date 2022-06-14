@@ -1,3 +1,4 @@
+from cProfile import label
 import glob
 from matplotlib import pyplot as plt
 import numpy as np
@@ -64,6 +65,7 @@ t = []                                          # lista para o tempo
 delta_t = []                                    # lista para o passo de tempo
 rho = []                                        # lista para a densidade
 
+
 sp.plot_spectral_density()
 
 for filename in filenames:
@@ -78,14 +80,19 @@ for filename in filenames:
     v.append(data[cut:, vj])
     w.append(data[cut:, wj])
     dpm_w.append(data[cut:, dpm_wj])
-    #rho.append(data[cut:, rho10])
+    rho.append(data[cut:, rho10])
 
 
 
-sp.plot_mean_vel(x, dpm_w, delta_t, 0, 0, dataframe6)
-#sp.plot_std_vel(x, w, delta_t, rho, dataframe3, exp_w_std, 'w')
-#sp.plot_std_vel(x, u, delta_t, rho, dataframe3, exp_u_std, 'u')
-#sp.plot_std_ke(x, u, v, w, delta_t, rho, dataframe3, exp_ke_std)
+
+#x2, y3, x_exp, y_exp = sp.plot_std_vel(x, w, delta_t, rho, dataframe3, exp_w_std, 'w')
+
+
+
+sp.plot_mean_vel(x, w, delta_t, 0, dataframe3, exp_w_mean)
+sp.plot_std_vel(x, w, delta_t, rho, dataframe3, exp_w_std, 'w')
+sp.plot_std_vel(x, u, delta_t, rho, dataframe3, exp_u_std, 'u')
+sp.plot_std_ke(x, u, v, w, delta_t, rho, dataframe3, exp_ke_std)
 #sp.plot_ln_ke(x, u, v, w, dataframe, exp_ke_std)
 #ke = sp.plot_std_ke(x, u, v, w, dataframe3, exp_ke_std)
 #sp.fft_ke(t, ke)
