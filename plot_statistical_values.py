@@ -29,7 +29,7 @@ dataframe4= pd.read_csv("computational_atual_28_probes_smag02.csv", keep_default
 dataframe5 = pd.read_csv("computational_atual_28_probes_smag02.csv", keep_default_na=True)
 
 # Importando os dados do paraview - w_mean
-dataframe6 = pd.read_csv("article_experimental_dpm_w_mean.csv", keep_default_na=True)
+dataframe6 = pd.read_csv("rho_paraview_position.csv", keep_default_na=True)
 
 # Importando os dados da velocidade média - w_mean
 exp_w_mean = pd.read_csv("article_experimental_w_mean.csv", keep_default_na=True)
@@ -51,7 +51,9 @@ j = 8                                           # índice da coluna da variável
 i = 3                                           # índice da coluna da variável x
 k = 1                                           # índice da coluna da variável t
 dt = 2
-cut = 10000                                     # corte temporal no sinal da velocidade
+cuti = 20000                                     # corte temporal no sinal da velocidade
+cutf = 263000
+#cut = 1                                     # corte temporal no sinal da velocidade
 sonda = 20                                      # sonda escolhida entre 1 e 34
 rho10 = 10
 
@@ -66,22 +68,20 @@ delta_t = []                                    # lista para o passo de tempo
 rho = []                                        # lista para a densidade
 
 
-sp.plot_spectral_density()
+sp.var_v_experiment(exp_u_std, exp_w_std, exp_ke_std)
 
 for filename in filenames:
     print(filename)
 
     data = np.loadtxt(fname=filename, skiprows=1)
-    #y.append(data[:, j])                        # armazenando a coluna j na lista y
     x.append(data[:, i])                         # armazenando a coluna i na lista x
-    t.append(data[:, k])                         # armazenando a coluna t0 na lista t   
-    delta_t.append(data[cut:, dt])
-    u.append(data[cut:, uj])
-    v.append(data[cut:, vj])
-    w.append(data[cut:, wj])
-    dpm_w.append(data[cut:, dpm_wj])
-    rho.append(data[cut:, rho10])
-
+    t.append(data[:, k])                         # armazenando a coluna t0 na lista t       
+    delta_t.append(data[cuti:cutf, dt])
+    u.append(data[cuti:cutf, uj])
+    v.append(data[cuti:cutf, vj])
+    w.append(data[cuti:cutf, wj])
+    dpm_w.append(data[cuti:cutf, dpm_wj])
+    rho.append(data[cuti:cutf, rho10])
 
 
 
@@ -89,10 +89,10 @@ for filename in filenames:
 
 
 
-sp.plot_mean_vel(x, w, delta_t, 0, dataframe3, exp_w_mean)
-sp.plot_std_vel(x, w, delta_t, rho, dataframe3, exp_w_std, 'w')
-sp.plot_std_vel(x, u, delta_t, rho, dataframe3, exp_u_std, 'u')
-sp.plot_std_ke(x, u, v, w, delta_t, rho, dataframe3, exp_ke_std)
+sp.plot_mean_vel(x, w, delta_t, 0, 0, exp_w_mean)
+sp.plot_std_vel(x, w, delta_t, rho, 0, exp_w_std, 'w')
+sp.plot_std_vel(x, u, delta_t, rho, 0, exp_u_std, 'u')
+sp.plot_std_ke(x, u, v, w, delta_t, rho, 0, exp_ke_std)
 #sp.plot_ln_ke(x, u, v, w, dataframe, exp_ke_std)
 #ke = sp.plot_std_ke(x, u, v, w, dataframe3, exp_ke_std)
 #sp.fft_ke(t, ke)

@@ -34,8 +34,8 @@ def plot_mean_vel(x, vel, dt, rho, dataframe, exp_w_mean):
 
     Retorna o gráfico da velocidade média em função da posição.
     """
-    x_paraview = dataframe.x_comp * (1.0 /0.15)
-    y_paraview = dataframe.w_average
+    #x_paraview = dataframe.x_comp * (1.0 /0.15)
+    #y_paraview = dataframe.w_average
 
     #rho_paraview = dataframe.density_average
     #w_paraview = []
@@ -146,8 +146,8 @@ def plot_std_ke(x, u, v, w, dt, rho, dataframe, exp_ke_std):
     x_exp = exp_ke_std.x1_exp
     y_exp = exp_ke_std.std_ke_exp
 
-    x_parav = dataframe.x_comp * (1.0 /0.15)
-    y_parav = dataframe.ke_stddev  
+    #x_parav = dataframe.x_comp * (1.0 /0.15)
+    #y_parav = dataframe.ke_stddev  
 
     plt.style.use('ggplot')
         
@@ -231,8 +231,8 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
         x_exp = exp_std_vel.x1_exp
         y_exp = exp_std_vel.std_u_exp
 
-        x_paraview = dataframe.x_comp * (1.0 /0.15)
-        y_paraview = dataframe.u_stddev  
+        #x_paraview = dataframe.x_comp * (1.0 /0.15)
+        #y_paraview = dataframe.u_stddev  
 
         plt.style.use('ggplot')
 
@@ -286,8 +286,8 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
         x_exp = exp_std_vel.x1_exp
         y_exp = exp_std_vel.std_w_exp
 
-        x_paraview = dataframe.x_comp * (1.0 /0.15)
-        y_paraview = dataframe.w_stddev  
+        #x_paraview = dataframe.x_comp * (1.0 /0.15)
+        #y_paraview = dataframe.w_stddev  
 
         plt.style.use('ggplot')
 
@@ -454,3 +454,26 @@ def plot_spectral_density():
     plt.savefig('Espectro_final.png', format='png', dpi=350)
     plt.show()
     return ept_kinetic[i][1], abs(ept_kinetic[i][0])
+
+def var_v_experiment(stdu, stdw, ke):
+    var_u = stdu.std_u_exp ** 2
+    var_w = stdw.std_w_exp ** 2
+    var_v = 2 * ke.std_ke_exp - var_u - var_w
+
+    x_exp = stdu.x1_exp
+
+    plt.style.use('ggplot')
+        
+    fig = plt.figure(dpi=350)
+    axes1 = fig.add_subplot(1, 1, 1)
+    axes1.set_ylabel('var_v')
+    axes1.set_xlabel('x / L')
+
+    print("var_v = \n", var_v)
+
+    #plt.plot(x2, y3, '-', label="Smagorinsky, Cs = 0.15")
+    plt.plot(x_exp, var_v, '*', color="green", label="Experimental")
+    plt.legend(loc='best')
+    fig.tight_layout()
+    plt.show()
+    return var_v
