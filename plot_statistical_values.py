@@ -16,6 +16,7 @@ As possibilidades de pós processamento aqui desenvolvidas são:
 - VELOCIDADE MÉDIA: de algum componente do vetor velocidade;
 - DESVIO PADRÃO: de algum componente do vetor velocidade;
 - ENERGIA CINÉTICA TURBULENTA;
+- TENSOR DE REYNOLDS SUBMALHA EXATO E ADIMENSIONAL.
 
 Coloquei especificamente para plotar a velocidade média w, a energia cinética
 turbulenta e os desvios padrões de u e w.
@@ -80,7 +81,12 @@ Irá plotar respectivamente a velocidade média w, desvio padrão de w,
 desvio padrão de u e energia cinética turbulenta. Os plotes irão comparar
 os resultados simulados com os experimentais.
 """
+
 sp.plot_mean_vel(x, w, delta_t, 0, exp_w_mean)
 sp.plot_std_vel(x, w, delta_t, 0, exp_w_std, 'w')
 sp.plot_std_vel(x, u, delta_t, 0, exp_u_std, 'u')
 sp.plot_std_ke(x, u, v, w, delta_t, 0, exp_ke_std)
+
+reynolds, reynolds_adm = sp.reynolds_tensor(u, v, w)
+print("\n Tensor de Reynolds : \n", reynolds)
+print("\n Tensor de Reynolds adimensional: \n", reynolds_adm)
