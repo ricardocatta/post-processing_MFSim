@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import statistical_module as sm
 import statistica_probes as sp
+import statistical_modules as stat_m
 
 ################################################################
 # Ricardo Tadeu Oliveira Catta Preta
@@ -85,12 +86,21 @@ os resultados simulados com os experimentais.
 sp.plot_mean_vel(x, w, delta_t, 0, exp_w_mean)
 sp.plot_std_vel(x, w, delta_t, 0, exp_w_std, 'w')
 sp.plot_std_vel(x, u, delta_t, 0, exp_u_std, 'u')
-ke_exp, ke_t = sp.plot_std_ke(x, u, v, w, delta_t, 0, exp_ke_std)
+x_exp, ke_exp, x_comp, ke_comp = sp.plot_std_ke(x, u, v, w, delta_t, 0, exp_ke_std)
 
 reynolds, reynolds_adm = sp.reynolds_tensor(u, v, w)
 print("\n Tensor de Reynolds : \n", reynolds)
 print("\n Tensor de Reynolds adimensional: \n", reynolds_adm)
 
+mean_ke_comp = np.round(np.mean(ke_comp), 4)
+mean_ke_exp = np.round(np.mean(ke_exp), 4)
+print("\n Média da Energia cinética turbulenta computacional: \n", mean_ke_comp)
+print("\n Média da Energia cinética turbulenta experimental: \n", mean_ke_exp)
+print("\n Erro relativo da Energia cinética turbulenta: {0:.4f}% \n" .format(stat_m.relative_error(mean_ke_exp, mean_ke_comp)))
+print("\n Erro estatístico da Energia cinética turbulenta experimental: \n", sm.statistical_error(ke_exp,6))
+print("\n Erro estatístico da Energia cinética turbulenta computacional: \n", sm.statistical_error(ke_comp,6))
+print("\n Desvio padrão da Energia cinética turbulenta experimental: \n", np.std(ke_exp))
+print("\n Desvio padrão da Energia cinética turbulenta computacional: \n", np.std(ke_comp))
 ke = (2/3) * (reynolds[0,0] + reynolds[1,1] + reynolds[2,2]) 
 
 Reynolds_d = 2 * (reynolds[0,1] + reynolds[0,2] + reynolds[1,2])

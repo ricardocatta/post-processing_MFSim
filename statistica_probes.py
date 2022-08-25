@@ -7,6 +7,8 @@ from scipy.optimize import curve_fit
 from scipy.special import expit
 import pandas as pd
 import statistical_module as sm
+import statistical_modules as stat_m
+
 
 
 
@@ -66,15 +68,22 @@ def plot_mean_vel(x, vel, dt, rho, exp_w_mean):
         favre_den[i] = np.sum(dt[i])
         
     y3 = (favre_num) / favre_den
-    print("y3 é = ", y3)
-    print("favre_num é = ", favre_num)
-    print("favre_den é = ", favre_den)
     
     plt.plot(x2, y3, '-', label="Smagorinsky, Cs = 0.15")
     plt.plot(x_exp, y_exp, '*', color="green", label="Experimental")
     plt.legend(loc='best')
     fig.tight_layout()
     plt.show()
+
+    mean_y3 = np.round(np.mean(y3), 3)
+    mean_y_exp = np.round(np.mean(y_exp), 3)
+    print("\n velocidade média computacional: \n", mean_y3)
+    print("\n velocidade média experimental: \n", mean_y_exp)
+    print("\n Erro relativo da velocidade média:{0:.3f}% \n" .format(stat_m.relative_error(mean_y_exp, mean_y3)))
+    print("\n Erro estatístico da velocidade média experimental: \n", sm.statistical_error(y_exp,6))
+    print("\n Erro estatístico da velocidade média computacional: \n", sm.statistical_error(y3,6))
+    print("\n Desvio padrão da velocidade média experimental: \n", np.std(y_exp))
+    print("\n Desvio padrão da velocidade média computacional: \n", np.std(y3))
     return x2, y3, x_exp, y_exp
 
 def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
@@ -93,7 +102,7 @@ def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
 
     OUTPUT:
 
-    Retorna o valor da energia cinética turbulenta média experimental e a energia cinética turbulenta simulada.
+    Retorna a energia cinética turbulenta e a posição, para o experimental e o computacional.
     """
 
     std_u = np.zeros(34)
@@ -136,8 +145,7 @@ def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
     plt.legend(loc='best')
     fig.tight_layout()
     plt.show()
-    ke_t_mean = np.mean(y_exp)
-    return ke_t_mean, y1
+    return x_exp, y_exp, x2, y1
 
 def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
     """
@@ -194,6 +202,16 @@ def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
         plt.legend(loc='best')
         fig.tight_layout()
         plt.show()
+
+        mean_y1 = np.round(np.mean(y1), 3)
+        mean_y_exp = np.round(np.mean(y_exp), 3)
+        print("\n mean_std_u computacional: \n", mean_y1)
+        print("\n mean_std_u experimental: \n", mean_y_exp)
+        print("\n Erro relativo de mean_std_u: {0:.3f}% \n" .format(stat_m.relative_error(mean_y_exp, mean_y1)))
+        print("\n Erro estatístico std_u experimental: \n", sm.statistical_error(y_exp,6))
+        print("\n Erro estatístico std_u computacional: \n", sm.statistical_error(y1,6))
+        print("\n std_std_u experimental: \n", np.std(y_exp))
+        print("\n std_std_u computacional: \n", np.std(y1))
     
     elif vel_i == 'w':
         std_vel = np.zeros(34)
@@ -231,6 +249,16 @@ def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
         plt.legend(loc='best')
         fig.tight_layout()
         plt.show()
+
+        mean_y1 = np.round(np.mean(y1), 3)
+        mean_y_exp = np.round(np.mean(y_exp), 3)
+        print("\n mean_std_w computacional: \n", mean_y1)
+        print("\n mean_std_w experimental: \n", mean_y_exp)
+        print("\n Erro relativo de mean_std_w: {0:.3f}% \n" .format(stat_m.relative_error(mean_y_exp, mean_y1)))
+        print("\n Erro estatístico std_w experimental: \n", sm.statistical_error(y_exp,6))
+        print("\n Erro estatístico std_w computacional: \n", sm.statistical_error(y1,6))
+        print("\n std_std_w experimental: \n", np.std(y_exp))
+        print("\n std_std_w computacional: \n", np.std(y1))
         return x2, y1, x_exp, y_exp
 
 
