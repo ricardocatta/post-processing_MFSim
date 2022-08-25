@@ -86,17 +86,13 @@ os resultados simulados com os experimentais.
 sp.plot_mean_vel(x, w, delta_t, 0, exp_w_mean)
 sp.plot_std_vel(x, w, delta_t, 0, exp_w_std, 'w')
 sp.plot_std_vel(x, u, delta_t, 0, exp_u_std, 'u')
-<<<<<<< HEAD
 x_exp, ke_exp, x_comp, ke_comp = sp.plot_std_ke(x, u, v, w, delta_t, 0, exp_ke_std)
-=======
 ke_exp, ke_t = sp.plot_std_ke(x, u, v, w, delta_t, 0, exp_ke_std)
->>>>>>> f4b468a5c7cbc27206a0694f7b09797e75c9481f
 
 reynolds, reynolds_adm = sp.reynolds_tensor(u, v, w)
 print("\n Tensor de Reynolds : \n", reynolds)
 print("\n Tensor de Reynolds adimensional: \n", reynolds_adm)
 
-<<<<<<< HEAD
 mean_ke_comp = np.round(np.mean(ke_comp), 3)
 mean_ke_exp = np.round(np.mean(ke_exp), 3)
 print("\n Média da Energia cinética turbulenta computacional: \n", mean_ke_comp)
@@ -106,7 +102,6 @@ print("\n Erro estatístico da Energia cinética turbulenta experimental: \n", s
 print("\n Erro estatístico da Energia cinética turbulenta computacional: \n", sm.statistical_error(ke_comp,6))
 print("\n Desvio padrão da Energia cinética turbulenta experimental: \n", np.std(ke_exp))
 print("\n Desvio padrão da Energia cinética turbulenta computacional: \n", np.std(ke_comp))
-=======
 ke = (2/3) * (reynolds[0,0] + reynolds[1,1] + reynolds[2,2]) 
 
 Reynolds_d = 2 * (reynolds[0,1] + reynolds[0,2] + reynolds[1,2])
@@ -117,4 +112,3 @@ print("\n Erro estatístico da Energia cinética turbulenta: \n", sm.statistical
 print("\n Energia cinética turbulenta experimental: \n", ke_exp)
 print("\n Reynolds_d : \n", Reynolds_d)
 print("\n Re total: \n", Re)
->>>>>>> f4b468a5c7cbc27206a0694f7b09797e75c9481f

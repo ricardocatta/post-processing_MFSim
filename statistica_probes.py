@@ -74,7 +74,6 @@ def plot_mean_vel(x, vel, dt, rho, exp_w_mean):
     plt.legend(loc='best')
     fig.tight_layout()
     plt.show()
-<<<<<<< HEAD
 
     mean_y3 = np.round(np.mean(y3), 3)
     mean_y_exp = np.round(np.mean(y_exp))
@@ -85,8 +84,6 @@ def plot_mean_vel(x, vel, dt, rho, exp_w_mean):
     print("\n Erro estatístico da velocidade média computacional: \n", sm.statistical_error(y3,6))
     print("\n Desvio padrão da velocidade média experimental: \n", np.std(y_exp))
     print("\n Desvio padrão da velocidade média computacional: \n", np.std(y3))
-=======
->>>>>>> f4b468a5c7cbc27206a0694f7b09797e75c9481f
     return x2, y3, x_exp, y_exp
 
 def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
@@ -105,11 +102,7 @@ def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
 
     OUTPUT:
 
-<<<<<<< HEAD
     Retorna a energia cinética turbulenta e a posição, para o experimental e o computacional.
-=======
-    Retorna o valor da energia cinética turbulenta média experimental e a energia cinética turbulenta simulada.
->>>>>>> f4b468a5c7cbc27206a0694f7b09797e75c9481f
     """
 
     std_u = np.zeros(34)
@@ -152,12 +145,7 @@ def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
     plt.legend(loc='best')
     fig.tight_layout()
     plt.show()
-<<<<<<< HEAD
     return x_exp, y_exp, x2, y1
-=======
-    ke_t_mean = np.mean(y_exp)
-    return ke_t_mean, y1
->>>>>>> f4b468a5c7cbc27206a0694f7b09797e75c9481f
 
 def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
     """
