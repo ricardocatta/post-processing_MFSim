@@ -101,13 +101,3 @@ print("\n Erro estatístico da Energia cinética turbulenta experimental: \n", s
 print("\n Erro estatístico da Energia cinética turbulenta computacional: \n", sm.statistical_error(ke_comp,6))
 print("\n Desvio padrão da Energia cinética turbulenta experimental: \n", np.std(ke_exp))
 print("\n Desvio padrão da Energia cinética turbulenta computacional: \n", np.std(ke_comp))
-ke = (2/3) * (reynolds[0,0] + reynolds[1,1] + reynolds[2,2]) 
-
-Reynolds_d = 2 * (reynolds[0,1] + reynolds[0,2] + reynolds[1,2])
-Re = ke + Reynolds_d
-
-print("\n Energia cinética turbulenta: \n", ke)
-print("\n Erro estatístico da Energia cinética turbulenta: \n", sm.statistical_error(ke_t,6))
-print("\n Energia cinética turbulenta experimental: \n", ke_exp)
-print("\n Reynolds_d : \n", Reynolds_d)
-print("\n Re total: \n", Re)
