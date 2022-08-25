@@ -125,20 +125,11 @@ def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
 
     x2 = np.zeros(34)
 
-    # preparando uma média de favre
-    favre_num = np.zeros(34)
-    favre_den = np.zeros(34)
     dt = np.array(dt)
     rho = np.array(rho)
 
     for i in range(34):
         x2[i] = np.mean(x1[i])
-        favre_num[i] = np.sum((dt[i] * y1[i] * rho[i]))
-        favre_den[i] = np.sum(dt[i] * rho[i])
-
-    y3 = favre_num / favre_den
-    print("y3 é = ", y3)
-
     
     plt.plot(x2, y1 , '-', label="Smagorinsky, Cs = 0.15")
     plt.plot(x_exp, y_exp, '*', color="green", label="Experimental")
@@ -167,19 +158,11 @@ def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
     if vel_i == 'u':
         std_vel = np.zeros(34)
 
-        favre_num = np.zeros(34)
-        favre_den = np.zeros(34)
         dt = np.array(dt)
         rho = np.array(rho)
 
         for i in range(34):
             std_vel[i] = sm.std(vel[i], 3)
-        
-        for i in range(34):
-            favre_num[i] = np.sum((dt[i] * std_vel[i] * rho[i]))
-            favre_den[i] = np.sum(dt[i] * rho[i])
-
-        y3 = favre_num / favre_den
     
         mean_var_vel = np.abs(std_vel)
     
@@ -214,25 +197,14 @@ def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
     elif vel_i == 'w':
         std_vel = np.zeros(34)
 
-        favre_num = np.zeros(34)
-        favre_den = np.zeros(34)
         dt = np.array(dt)
         rho = np.array(rho)
 
         for i in range(34):
             std_vel[i] = sm.std(vel[i], 3)
-        
-        
-        for i in range(34):
-            favre_num[i] = np.sum((dt[i] * std_vel[i] * rho[i]))
-            favre_den[i] = np.sum(dt[i] * rho[i])
-
-        y3 = favre_num / favre_den
-
     
         mean_var_vel = np.abs(std_vel)
     
-
         x_exp = exp_std_vel.x1_exp
         y_exp = exp_std_vel.std_w_exp
 
@@ -252,7 +224,6 @@ def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
 
         for i in range(34):
             x2[i] = np.mean(x1[i])
-
 
         plt.plot(x2, y1 , '-', label="Smagorinsky, Cs = 0.15")
         plt.plot(x_exp, y_exp, '*', color="green", label="Experimental")
