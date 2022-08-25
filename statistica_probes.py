@@ -76,7 +76,7 @@ def plot_mean_vel(x, vel, dt, rho, exp_w_mean):
     plt.show()
 
     mean_y3 = np.round(np.mean(y3), 3)
-    mean_y_exp = np.round(np.mean(y_exp))
+    mean_y_exp = np.round(np.mean(y_exp), 3)
     print("\n velocidade média computacional: \n", mean_y3)
     print("\n velocidade média experimental: \n", mean_y_exp)
     print("\n Erro relativo da velocidade média:{0:.3f}% \n" .format(stat_m.relative_error(mean_y_exp, mean_y3)))
