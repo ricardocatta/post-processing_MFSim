@@ -93,7 +93,7 @@ def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
 
     OUTPUT:
 
-    Retorna o desvio padrão da energia cinética turbulenta em função da posição.
+    Retorna o valor da energia cinética turbulenta média experimental e a energia cinética turbulenta simulada.
     """
 
     std_u = np.zeros(34)
@@ -136,7 +136,8 @@ def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
     plt.legend(loc='best')
     fig.tight_layout()
     plt.show()
-    return x2, y1, x_exp, y_exp
+    ke_t_mean = np.mean(y_exp)
+    return ke_t_mean, y1
 
 def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
     """

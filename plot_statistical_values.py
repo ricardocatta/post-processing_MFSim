@@ -85,8 +85,19 @@ os resultados simulados com os experimentais.
 sp.plot_mean_vel(x, w, delta_t, 0, exp_w_mean)
 sp.plot_std_vel(x, w, delta_t, 0, exp_w_std, 'w')
 sp.plot_std_vel(x, u, delta_t, 0, exp_u_std, 'u')
-sp.plot_std_ke(x, u, v, w, delta_t, 0, exp_ke_std)
+ke_exp, ke_t = sp.plot_std_ke(x, u, v, w, delta_t, 0, exp_ke_std)
 
 reynolds, reynolds_adm = sp.reynolds_tensor(u, v, w)
 print("\n Tensor de Reynolds : \n", reynolds)
 print("\n Tensor de Reynolds adimensional: \n", reynolds_adm)
+
+ke = (2/3) * (reynolds[0,0] + reynolds[1,1] + reynolds[2,2]) 
+
+Reynolds_d = 2 * (reynolds[0,1] + reynolds[0,2] + reynolds[1,2])
+Re = ke + Reynolds_d
+
+print("\n Energia cinética turbulenta: \n", ke)
+print("\n Erro estatístico da Energia cinética turbulenta: \n", sm.statistical_error(ke_t,6))
+print("\n Energia cinética turbulenta experimental: \n", ke_exp)
+print("\n Reynolds_d : \n", Reynolds_d)
+print("\n Re total: \n", Re)
