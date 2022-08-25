@@ -17,7 +17,7 @@ import statistical_module as sm
 
 
 
-def plot_mean_vel(x, vel, dt, rho, dataframe, exp_w_mean):
+def plot_mean_vel(x, vel, dt, rho, exp_w_mean):
     """
      Plota o valor médio da velocidade em função da posição.
 
@@ -27,35 +27,25 @@ def plot_mean_vel(x, vel, dt, rho, dataframe, exp_w_mean):
     - vel = vetor de velocidade com a quantidade tempo por número de probes;
     - dt = vetor com o passo de tempo;
     - rho = vetor com a densidade do campo euleriano;
-    - dataframe = tabela dos dados coletados pelo paraview;
     - exp_w_mean = tabela com os dados experimentais.
 
     OUTPUT:
 
-    Retorna o gráfico da velocidade média em função da posição.
+    Retorna o gráfico da velocidade média em função da posição e os componentes
+    da posição e velocidade média.
     """
-    #x_paraview = dataframe.x_comp * (1.0 /0.15)
-    #y_paraview = dataframe.w_average
-
-    #rho_paraview = dataframe.density_average
-    #w_paraview = []
-    #for i in range(29):
-    #    w_paraview.append(np.sum((y_paraview[i] * rho_paraview[i])) / np.sum(rho_paraview[i])) # média de ponderada pelo dt.
-
     x_exp = exp_w_mean.x1_exp
     y_exp = exp_w_mean.mean_w_exp
-    #y_exp = exp_w_mean.dpm_mean_w
-
 
     plt.style.use('ggplot')
         
-    fig = plt.figure(dpi=350)
+    fig = plt.figure(dpi=350)                       # resolução da imagem por ponto
     axes1 = fig.add_subplot(1, 1, 1)
     axes1.set_ylabel('mean_w')
     axes1.set_xlabel('x / L')
         
     x0 = np.array(x)                                # adimensionalizando a coordenada x
-    x1 = x0 * 1.0 / 0.15
+    x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
     
     dt = np.array(dt)
     rho = np.array(rho)
@@ -64,15 +54,14 @@ def plot_mean_vel(x, vel, dt, rho, dataframe, exp_w_mean):
     x2 = np.zeros(34)
     y2 = np.zeros(34)
 
-    favre_num = np.zeros(34)
+    # preparando uma média de favre
+    favre_num = np.zeros(34)                        
     favre_den = np.zeros(34)
 
     
     for i in range(34):
         x2[i] = np.mean(x1[i])
         y2[i] = np.mean(y1[i])    # antigo
-        #favre_num[i] = np.sum((dt[i] * y1[i] * rho[i]))
-        #favre_den[i] = np.sum(dt[i] * rho[i])
         favre_num[i] = np.sum(dt[i] * y1[i])
         favre_den[i] = np.sum(dt[i])
         
@@ -82,36 +71,13 @@ def plot_mean_vel(x, vel, dt, rho, dataframe, exp_w_mean):
     print("favre_den é = ", favre_den)
     
     plt.plot(x2, y3, '-', label="Smagorinsky, Cs = 0.15")
-    #plt.plot(x2, y3 , 'o', label="Smagorinsky, Cs = 0.15 (com favre)")
-    #plt.plot(x_paraview, w_paraview, '--', label="Smagorinsky, Cs = 0.15 (paraview)")
     plt.plot(x_exp, y_exp, '*', color="green", label="Experimental")
     plt.legend(loc='best')
     fig.tight_layout()
     plt.show()
-
-    #x_exp1 = np.log(x_exp)
-    #y_exp1 = np.log(y_exp)
-#
-    #x21 = np.log(x2[2:])
-    #y31 = np.log(y3[2:])
-
-    a, b = sm.least_square(x_exp, y_exp, 3)
-    y3 =  y3[2:-1] * 1.0 / np.max(y_exp)
-    a1, b1 = sm.least_square(x2[2:-1], y3, 3)
-
-    y_exp = a * x_exp + b
-    y3 = a1 * x2 + b1
-    print("a = ", a)
-    print("b = ", b)
-
-    print("a1 = ", a1)
-    print("b1 = ", b1)
-    plt.plot(x_exp, y_exp, 'o', label="Experimental")
-    plt.plot(x2, y3, '-', label="MFSim")
-    plt.show()
     return x2, y3, x_exp, y_exp
 
-def plot_std_ke(x, u, v, w, dt, rho, dataframe, exp_ke_std):
+def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
     """
     Plota o desvio padrão da energia cinética em função da posição.
 
@@ -123,7 +89,6 @@ def plot_std_ke(x, u, v, w, dt, rho, dataframe, exp_ke_std):
     - w = vetor de velocidade w com a dimensão da quantidade tempo por número de probes;
     - dt = vetor com o passo de tempo;
     - rho = vetor com a densidade do campo euleriano;
-    - dataframe = tabela dos dados coletados pelo paraview;
     - exp_ke_std = tabela com os dados experimentais para energia cinética turbulenta.
 
     OUTPUT:
@@ -146,9 +111,6 @@ def plot_std_ke(x, u, v, w, dt, rho, dataframe, exp_ke_std):
     x_exp = exp_ke_std.x1_exp
     y_exp = exp_ke_std.std_ke_exp
 
-    #x_parav = dataframe.x_comp * (1.0 /0.15)
-    #y_parav = dataframe.ke_stddev  
-
     plt.style.use('ggplot')
         
     fig = plt.figure(dpi=350)
@@ -157,12 +119,13 @@ def plot_std_ke(x, u, v, w, dt, rho, dataframe, exp_ke_std):
     axes1.set_xlabel('x / L')
         
     x0 = np.array(x)                                # adimensionalizando a coordenada x
-    x1 = x0 * 1.0 / 0.15
+    x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
 
     y1 = np.array(ke)
 
     x2 = np.zeros(34)
 
+    # preparando uma média de favre
     favre_num = np.zeros(34)
     favre_den = np.zeros(34)
     dt = np.array(dt)
@@ -178,19 +141,13 @@ def plot_std_ke(x, u, v, w, dt, rho, dataframe, exp_ke_std):
 
     
     plt.plot(x2, y1 , '-', label="Smagorinsky, Cs = 0.15")
-    #plt.plot(x2, y3 , 'o', label="Smagorinsky, Cs = 0.15 (com favre)")
-    #plt.plot(x_parav, y_parav, '--', label="Smagorinsky, Cs = 0.15 (paraview)")
     plt.plot(x_exp, y_exp, '*', color="green", label="Experimental")
     plt.legend(loc='best')
     fig.tight_layout()
     plt.show()
     return x2, y1, x_exp, y_exp
 
-def sigmoid(x, Beta_1, Beta_2):
-     y = 1 / (1 + np.exp(-Beta_1*(x-Beta_2)))
-     return y
-
-def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
+def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
     """
     Plota o valor desvio padrão da velocidade em função da posição.
 
@@ -200,7 +157,6 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
     - vel = vetor de velocidade com a quantidade tempo por número de probes;
     - dt = vetor com o passo de tempo;
     - rho = vetor com a densidade do campo euleriano;
-    - dataframe = tabela dos dados coletados pelo paraview;
     - exp_std_vel = tabela com os dados experimentais para o desvio padrão da velocidade;
     - vel_i = tabela de velocidade que se deseja calcular o desvio padrão.
 
@@ -227,12 +183,8 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
     
         mean_var_vel = np.abs(std_vel)
     
-
         x_exp = exp_std_vel.x1_exp
         y_exp = exp_std_vel.std_u_exp
-
-        #x_paraview = dataframe.x_comp * (1.0 /0.15)
-        #y_paraview = dataframe.u_stddev  
 
         plt.style.use('ggplot')
 
@@ -242,7 +194,7 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
         axes1.set_xlabel('x / L')
 
         x0 = np.array(x)                                # adimensionalizando a coordenada x
-        x1 = x0 * 1.0 / 0.15
+        x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
 
         y1 = np.array(mean_var_vel)
 
@@ -254,8 +206,6 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
         print("x2 = ", x2)
 
         plt.plot(x2, y1 , '-', label="Smagorinsky, Cs = 0.15")
-        #plt.plot(x2, y3 , 'o', label="Smagorinsky, Cs = 0.15 (com favre)")
-        #plt.plot(x_paraview, y_paraview, '--', label="Smagorinsky, Cs = 0.15 (paraview)")
         plt.plot(x_exp, y_exp, '*', color="green", label="Experimental")
         plt.legend(loc='best')
         fig.tight_layout()
@@ -286,9 +236,6 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
         x_exp = exp_std_vel.x1_exp
         y_exp = exp_std_vel.std_w_exp
 
-        #x_paraview = dataframe.x_comp * (1.0 /0.15)
-        #y_paraview = dataframe.w_stddev  
-
         plt.style.use('ggplot')
 
         fig = plt.figure(dpi=350)
@@ -297,7 +244,7 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
         axes1.set_xlabel('x / L')
 
         x0 = np.array(x)                                # adimensionalizando a coordenada x
-        x1 = x0 * 1.0 / 0.15
+        x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
 
         y1 = np.array(mean_var_vel)
 
@@ -306,174 +253,10 @@ def plot_std_vel(x, vel, dt, rho, dataframe, exp_std_vel, vel_i):
         for i in range(34):
             x2[i] = np.mean(x1[i])
 
-        print("x2 = ", x2)
-        
-        #popt, pcov = curve_fit(sigmoid, x_exp, y_exp)
-
 
         plt.plot(x2, y1 , '-', label="Smagorinsky, Cs = 0.15")
-        #plt.plot(x2, y3 , 'o', label="Smagorinsky, Cs = 0.15 (com favre)")
-        #plt.plot(x_paraview, y_paraview, '--', label="Smagorinsky, Cs = 0.15 (paraview)")
         plt.plot(x_exp, y_exp, '*', color="green", label="Experimental")
-        #y_fit = sigmoid(x_exp, *popt)
-        #plt.plot(x_exp,y_fit, linewidth=3.0, label='fit')
         plt.legend(loc='best')
         fig.tight_layout()
         plt.show()
         return x2, y1, x_exp, y_exp
-
-    
-
-def espectro(t,xc,u,v,w):
-    """
-    Calcula o valor da densidade espectral de energia cinética turbulenta.
-
-    INPUT:
-
-    - t = vetor do tempo;
-    - xc = vetor de posição com a quantidade tempo por número de probes;
-    - u = vetor de velocidade u com a dimensão da quantidade tempo por número de probes;
-    - v = vetor de velocidade v com a dimensão da quantidade tempo por número de probes;
-    - w = vetor de velocidade w com a dimensão da quantidade tempo por número de probes.
-
-    OUTPUT:
-
-    - Yl = O vetor com a FFT da energia cinética;
-    - frql = O vetor com os valores para a frequência.
-    """
-    ul = u - np.mean(u)    # Calcula a flutuação da velocidade u
-    vl = v - np.mean(v)    # Calcula a flutuação da velocidade v  
-    wl = w - np.mean(w)    # Calcula a flutuação da velocidade w  
-
-    Enel = (ul * ul + vl * vl + wl * wl) / 2  
-    print(" Enel antes= ", Enel)
-    contUl = 0
-    for i in ul:
-        if contUl<45:
-            Enel[contUl] = Enel[contUl]*np.sin(contUl*2*np.pi/180)
-        if (contUl>(len(xc)-46)):
-            Enel[contUl] = Enel[contUl]*np.sin((2*(45 + contUl - (len(xc)-46)))*np.pi/180)
-        contUl = contUl + 1
-    print(" contUl = ", contUl)
-    print(" Enel depois= ", Enel)
-    yl = Enel
-    nl = len(yl)
-    kl = np.arange(nl)
-    frql = kl
-    frql = frql[range(nl//2)]
-    Yl1 = np.fft.fft(yl)
-    Yl = Yl1.real ** 2 + Yl1.imag ** 2
-    Yl = Yl[range(nl//2)]
-    print(" Yl = ", Yl)
-    print(" frql = ", frql)
-    return Yl, frql
-
-def plot_spectral_density():
-    """
-    Plota a densidade espectral de energia cinética turbulenta.
-
-    OUTPUT:
-
-    Retorna o gráfico da densidade espectral de energia cinética turbulenta.
-    """
-    font = FontProperties()
-    font.set_family('serif')
-
-    x1R = 1
-    x2R = 1000000
-    xR = np.arange(x1R,x2R,10)
-    #yR = (-5.0/3.0) * xR
-    #yRl = (-25.0/3.0) * xR
-    yR = 10 ** ((-5.0/3.0)*np.log10(xR))*1000000000
-    yRl = 10 ** ((-25.0/3.0)*np.log10(xR))* (10 ** 34)
-    #yRl = 10 ** ((-25.0/3.0)*np.log10(xR))* (10 ** 34)
-
-    dir = [""]
-    probe = ["surf00001_sonda00017.dat"]    # Escolha da probe
-
-
-    filelist = []
-    for j in range(1):
-        for i in range(1):
-            Path = dir[j] + probe[i]
-            filelist.append(Path)
-
-    print(filelist)
-
-    pularLinhas= 10000 #cerca de 10s
-
-    t = []
-    xc = []
-    u = []
-    v = []
-    w = []
-
-    # filelist=[Path,Path2,Path3]
-    for file in filelist:
-        [t0,x,u0,v0,w0] = np.loadtxt(file,unpack=True,skiprows=pularLinhas,usecols=(1,3,6,7,8))
-        t.append(t0)
-        xc.append(x)
-        u.append(u0)
-        v.append(v0)
-        w.append(w0)
-
-
-    ept_kinetic = []
-
-    for i in range(len(filelist)):
-        ept = espectro(t[i],xc[i],u[i],v[i],w[i])
-        ept_kinetic.append(ept)
-
-    plt.figure()
-    print(len(ept_kinetic))
-    #frec = np.log10(ept_kinetic[i][1])
-    #E_d = np.log10(abs(ept_kinetic[i][0]))
-    frec = ept_kinetic[i][1]
-    E_d = abs(ept_kinetic[i][0])
-    print("frec = ", frec)
-    print("E_d = ", E_d)
-    print("len frec = ", len(frec))
-
-    for i in range(len(ept_kinetic)):
-
-        plt.xlabel('${f}$ [Hz]', fontsize=19, fontproperties=font)
-        plt.ylabel('${E(f)}$', fontsize=19, fontproperties=font)
-        plt.loglog(frec[0:50000], E_d[0:50000], color='red',linewidth=0.8)
-        plt.loglog(xR,yR,'--',color='black',linewidth=1.5, label='$m = -5/3$')
-        plt.loglog(xR,yRl,'--',color='green',linewidth=1.5, label='$m = -25/3$')
-        #plt.loglog(frec[50000],E_d,'--',color='blue',linewidth=1.5, label='$m = -25/3$')
-#
-    ax= plt.gca()	
-    #ax.set_xlim([1,10000000])
-    #ax.set_ylim([0.00000000001,10000000])	
-    ax.set_xlim([1,500000])
-    ax.set_ylim([0.00000000001,10000000])
-    ax.legend(title='Coeficiente Angular')
-    plt.title('Densidade Espectral de Energia Cinética Turbulenta')	
-    plt.grid()
-    plt.savefig('Espectro_final.png', format='png', dpi=350)
-    plt.show()
-    return ept_kinetic[i][1], abs(ept_kinetic[i][0])
-
-def var_v_experiment(stdu, stdw, ke):
-    var_u = stdu.std_u_exp ** 2
-    var_w = stdw.std_w_exp ** 2
-    var_v = 2 * ke.std_ke_exp - var_u - var_w
-
-    x_exp = stdu.x1_exp
-
-    plt.style.use('ggplot')
-        
-    fig = plt.figure(dpi=350)
-    axes1 = fig.add_subplot(1, 1, 1)
-    axes1.set_ylabel('var_v')
-    axes1.set_xlabel('x / L')
-
-    print("var_v = \n", var_v)
-
-    #plt.plot(x2, y3, '-', label="Smagorinsky, Cs = 0.15")
-    plt.plot(x_exp, var_v, '*', color="green", label="Experimental")
-    plt.legend(loc='best')
-    fig.tight_layout()
-    plt.show()
-    return var_v
