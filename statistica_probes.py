@@ -383,7 +383,7 @@ def Fourier_transform_ke(t,xc,u,v,w):
 
 def plot_espectro():
     """
-     Plota a densidade espectra da energia cinética turbulenta.
+     Plota a densidade espectral da energia cinética turbulenta.
     """
 
     font = FontProperties()
