@@ -347,3 +347,115 @@ def reynolds_tensor(u_vel, v_vel, w_vel):
     Re_adm = Re * 1.0 / np.mean(Re_ww)
 
     return Re, Re_adm
+
+def Fourier_transform_ke(t,xc,u,v,w):
+    """
+     Calcula a transformada de Fourier da energia cinética turbulenta.
+
+    INPUT:
+
+    - ul = componente x da flutuação da velocidade;
+    - vl = componente y da flutuação da velocidade;
+    - wl = componente z da flutuação da velocidade;
+    - xc = componente x do espaço;
+    - t = tempo.
+
+    OUTPUT:
+
+    Retorna os valores da energia cinética turbulenta e a frequência.
+    """
+    # Calculando as flutações das componentes da velocidade
+    ul = u - np.mean(u)
+    vl = v - np.mean(v)
+    wl = w - np.mean(w)
+
+    Enel = (ul * ul + vl * vl + wl * wl)/2
+
+    yl = Enel
+    nl = len(yl)
+    kl = np.arange(nl)
+    frql = kl
+    frql = frql[range(nl//2)]
+    Yl1 = np.fft.fft(yl)
+    Yl = np.sqrt(Yl1.real ** 2 + Yl1.imag ** 2)
+    Yl = Yl[range(nl//2)]
+    return Yl, frql
+
+def plot_espectro():
+    """
+     Plota a densidade espectra da energia cinética turbulenta.
+    """
+
+    font = FontProperties()
+    font.set_family('serif')
+
+    x1R = 1
+    x2R = 10000
+    xR = np.arange(x1R,x2R,10)
+    yR = np.exp((-5.0/3.0)*np.log(xR))*10000000
+
+    dir = [""]
+    probe = ["surf00001_sonda00025.dat"]
+
+
+    filelist = []
+    for j in range(1):
+        for i in range(1):
+            Path = dir[j] + probe[i]
+            filelist.append(Path)
+
+    print("filelist = ", filelist)
+
+    pularLinhas= 10000 #cerca de 10s
+
+    t = []
+    xc = []
+    u = []
+    v = []
+    w = []
+
+    # filelist=[Path,Path2,Path3]
+    for file in filelist:
+        [t0,x,u0,v0,w0] = np.loadtxt(file,unpack=True,skiprows=pularLinhas,usecols=(1,3,6,7,8))
+        t.append(t0)
+        xc.append(x)
+        u.append(u0)
+        v.append(v0)
+        w.append(w0)
+
+    ept_kinetic = []
+
+    kinetic_energy =[]
+    frequency = []
+
+    for i in range(len(filelist)):
+        ept = Fourier_transform_ke(t[i],xc[i],u[i],v[i],w[i])
+        ept_kinetic.append(ept)
+
+    for i in range(len(filelist)):
+        kinetic_energy1,  frequency1 = Fourier_transform_ke(t[i],xc[i],u[i],v[i],w[i])
+        kinetic_energy.append(kinetic_energy1)
+        frequency.append(frequency1)    
+
+
+    cor =["darkgray","tab:blue","tab:red","black"]
+    plt.figure()
+
+    print("Energia cinética = \n", kinetic_energy)
+    print("Frequência = \n", frequency)
+
+    for i in range(len(ept_kinetic)):
+
+        plt.xlabel('$\log{f}$ [Hz]', fontsize=19, fontproperties=font)
+        plt.ylabel('$\log{E(f)}$', fontsize=19, fontproperties=font)
+        plt.loglog(frequency[i],kinetic_energy[i],color='red',linewidth=0.8)
+        p_ret  = plt.loglog(xR,yR,'--',color='black',linewidth=1.5, label='$m = -5/3$')
+
+    ax= plt.gca()	
+    ax.set_xlim([1,10000])
+    ax.set_ylim([0.00001,100000])	
+    ax.legend(title='Coeficiente Angular')
+    plt.title('Densidade Espectral de Energia Cinética Turbulenta')	
+    plt.grid()
+    #plt.savefig('Espectro.png', format='png', dpi=350)
+    plt.show()

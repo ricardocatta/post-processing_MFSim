@@ -65,6 +65,8 @@ t = []                                          # lista para o tempo
 delta_t = []                                    # lista para o passo de tempo
 rho = []                                        # lista para a densidade
 
+sp.plot_espectro()
+
 for filename in filenames:
     print(filename)
     data = np.loadtxt(fname=filename, skiprows=1)
