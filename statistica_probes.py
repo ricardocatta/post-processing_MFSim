@@ -53,15 +53,16 @@ def plot_mean_vel(x, vel, dt, rho, exp_w_mean):
     rho = np.array(rho)
     y1 = np.array(vel)
 
-    x2 = np.zeros(34)
-    y2 = np.zeros(34)
+    x2 = np.zeros(len(vel))
+    y2 = np.zeros(len(vel))
+
 
     # preparando uma média de favre
-    favre_num = np.zeros(34)                        
-    favre_den = np.zeros(34)
+    favre_num = np.zeros(len(vel))                        
+    favre_den = np.zeros(len(vel))
 
     
-    for i in range(34):
+    for i in range(len(vel)):
         x2[i] = np.mean(x1[i])
         y2[i] = np.mean(y1[i])    # antigo
         favre_num[i] = np.sum(dt[i] * y1[i])
@@ -105,12 +106,12 @@ def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
     Retorna a energia cinética turbulenta e a posição, para o experimental e o computacional.
     """
 
-    std_u = np.zeros(34)
-    std_v = np.zeros(34)
-    std_w = np.zeros(34)
-    ke = np.zeros(34)
+    std_u = np.zeros(len(u))
+    std_v = np.zeros(len(u))
+    std_w = np.zeros(len(u))
+    ke = np.zeros(len(u))
 
-    for i in range(34):
+    for i in range(len(u)):
         std_u[i] = sm.std(u[i], 3)
         std_v[i] = sm.std(v[i], 3)
         std_w[i] = sm.std(w[i], 3)
@@ -132,12 +133,12 @@ def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
 
     y1 = np.array(ke)
 
-    x2 = np.zeros(34)
+    x2 = np.zeros(len(u))
 
     dt = np.array(dt)
     rho = np.array(rho)
 
-    for i in range(34):
+    for i in range(len(u)):
         x2[i] = np.mean(x1[i])
     
     plt.plot(x2, y1 , '-', label="Smagorinsky, Cs = 0.15")
@@ -165,12 +166,12 @@ def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
     Retorna um vetor com 34 pontos da velocidade média em função da posição.
     """
     if vel_i == 'u':
-        std_vel = np.zeros(34)
+        std_vel = np.zeros(len(vel))
 
         dt = np.array(dt)
         rho = np.array(rho)
 
-        for i in range(34):
+        for i in range(len(vel)):
             std_vel[i] = sm.std(vel[i], 3)
     
         mean_var_vel = np.abs(std_vel)
@@ -190,9 +191,9 @@ def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
 
         y1 = np.array(mean_var_vel)
 
-        x2 = np.zeros(34)
+        x2 = np.zeros(len(vel))
 
-        for i in range(34):
+        for i in range(len(vel)):
             x2[i] = np.mean(x1[i])
 
         print("x2 = ", x2)
@@ -214,12 +215,12 @@ def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
         print("\n std_std_u computacional: \n", np.std(y1))
     
     elif vel_i == 'w':
-        std_vel = np.zeros(34)
+        std_vel = np.zeros(len(vel))
 
         dt = np.array(dt)
         rho = np.array(rho)
 
-        for i in range(34):
+        for i in range(len(vel)):
             std_vel[i] = sm.std(vel[i], 3)
     
         mean_var_vel = np.abs(std_vel)
@@ -239,9 +240,9 @@ def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
 
         y1 = np.array(mean_var_vel)
 
-        x2 = np.zeros(34)
+        x2 = np.zeros(len(vel))
 
-        for i in range(34):
+        for i in range(len(vel)):
             x2[i] = np.mean(x1[i])
 
         plt.plot(x2, y1 , '-', label="Smagorinsky, Cs = 0.15")
@@ -280,26 +281,26 @@ def reynolds_tensor(u_vel, v_vel, w_vel):
     v = np.array(v_vel)
     w = np.array(w_vel)
 
-    u_bar = np.zeros(34)
-    v_bar = np.zeros(34)
-    w_bar = np.zeros(34)
+    u_bar = np.zeros(len(u_vel))
+    v_bar = np.zeros(len(u_vel))
+    w_bar = np.zeros(len(u_vel))
 
-    uv_bar = np.zeros(34)
-    vu_bar = np.zeros(34)
+    uv_bar = np.zeros(len(u_vel))
+    vu_bar = np.zeros(len(u_vel))
 
-    uw_bar = np.zeros(34)
-    wu_bar = np.zeros(34)
+    uw_bar = np.zeros(len(u_vel))
+    wu_bar = np.zeros(len(u_vel))
     
-    wv_bar = np.zeros(34)
-    vw_bar = np.zeros(34)
-    
-
-    uu_bar = np.zeros(34)
-    vv_bar = np.zeros(34)
-    ww_bar = np.zeros(34)
+    wv_bar = np.zeros(len(u_vel))
+    vw_bar = np.zeros(len(u_vel))
     
 
-    for i in range(34):
+    uu_bar = np.zeros(len(u_vel))
+    vv_bar = np.zeros(len(u_vel))
+    ww_bar = np.zeros(len(u_vel))
+    
+
+    for i in range(len(u_vel)):
         u_bar[i] = np.mean(u[i])
         v_bar[i] = np.mean(v[i])
         w_bar[i] = np.mean(w[i])
