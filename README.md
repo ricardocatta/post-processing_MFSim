@@ -1,6 +1,6 @@
 # post_processing_MFSim
 
-O objetivo do projeto "post_processing_MFSim" é realizar comparações entre os resultados do MFSim (um simulador) e resultados experimentais. Para fazer essa comparação, você deve usar os seguintes arquivos:
+O objetivo do projeto "post_processing_MFSim" é realizar comparações entre os resultados do MFSim e resultados experimentais. Para fazer essa comparação, você deve usar os seguintes arquivos:
 
 - plot_statistical_values.py: Este é o arquivo principal que você deve executar. Ele chamará o módulo statistica_probes.py, onde estão implementadas as funções relacionadas ao processamento estatístico dos resultados.
 
