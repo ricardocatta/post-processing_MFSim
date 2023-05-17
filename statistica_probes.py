@@ -21,10 +21,9 @@ from scipy.signal import savgol_filter
 
 
 
-
 def plot_mean_vel(x, vel, dt, rho, exp_w_mean):
     """
-    Plota o valor médio da velocidade em função da posição.
+     Plota o valor médio da velocidade em função da posição.
 
     INPUT:
 
@@ -42,42 +41,62 @@ def plot_mean_vel(x, vel, dt, rho, exp_w_mean):
     x_exp = exp_w_mean.x1_exp
     y_exp = exp_w_mean.mean_w_exp
 
-    fig, axes1 = plt.subplots(figsize=(16, 10), dpi=180)
+    #plt.style.use('ggplot')
+        
+    fig = plt.figure(figsize=(16,10), dpi = 180)                       # resolução da imagem por ponto
+    axes1 = fig.add_subplot(1, 1, 1)
     axes1.set_ylabel('mean_w', fontsize=20)
     axes1.set_xlabel('x / L', fontsize=20)
     axes1.set_xlim([-1, 0])
     axes1.set_ylim([-1, 0])
-
-    x0 = np.array(x)
-    x1 = x0 * 1.0 / 0.15
-
+        
+    x0 = np.array(x)                                # adimensionalizando a coordenada x
+    x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
+    
+    dt = np.array(dt)
+    rho = np.array(rho)
     y1 = np.array(vel)
 
-    x2 = np.mean(x1, axis=1)
+    x2 = np.zeros(len(vel))
+    y2 = np.zeros(len(vel))
 
-    favre_num = np.sum(dt * y1, axis=1)
-    favre_den = np.sum(dt, axis=1)
 
-    y3 = favre_num / favre_den
+    # preparando uma média de favre
+    favre_num = np.zeros(len(vel))                        
+    favre_den = np.zeros(len(vel))
 
-    yhat = savgol_filter(y3, 33, 4)
+    
+    for i in range(len(vel)):
+        x2[i] = np.mean(x1[i])
+        y2[i] = np.mean(y1[i])    # antigo
+        favre_num[i] = np.sum(dt[i] * y1[i])
+        favre_den[i] = np.sum(dt[i])
+        
+    y3 = (favre_num) / favre_den
+
+    print("y3 = ", y3)
+    print("len(y3) = ", len(y3))
+
+    yhat = savgol_filter(y3, 33, 4) # window size 51, polynomial order 3
 
     X1 = np.linspace(x2.min(), x2.max(), 500)
     Y1 = yhat
 
-    if Y1.max() > y_exp.max():
-        Y11 = Y1 * 1.05
+    if (Y1.max() > y_exp.max()):
+        Y11 = Y1*1.05
     else:
-        Y11 = y_exp * 1.05
-
+        Y11 = y_exp*1.05
+    
     axes1.set_xlim([X1.min(), X1.max()])
     axes1.set_ylim([Y1.min(), Y11.max()])
-    axes1.tick_params(labelsize=20)
-    axes1.plot(x2, yhat, '-', color="black", label="Smagorinsky, Cs = 0.15")
-    axes1.scatter(x_exp, y_exp, color="none", edgecolor="black", label="Experimental")
-    axes1.legend(loc='best', fontsize=20)
-    axes1.grid()
-    plt.savefig('Cs_015_mean_w.jpeg', format='jpeg', figsize=(1, 0.3), dpi=180)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.plot(x2, yhat, '-', color="black", label="Smagorinsky , Cs =0.15")
+    plt.scatter(x_exp, y_exp, color="none", edgecolor="black", label="Experimental")
+    plt.legend(loc='best', fontsize=20)
+    #fig.tight_layout()
+    plt.grid()
+    plt.savefig('Cs_015_mean_w.jpeg', format='jpeg', figsize=(1,0.3), dpi = 180)
     plt.show()
 
     return x2, y3, x_exp, y_exp
@@ -101,47 +120,63 @@ def plot_std_ke(x, u, v, w, dt, rho, exp_ke_std):
     Retorna a energia cinética turbulenta e a posição, para o experimental e o computacional.
     """
 
-    std_u = np.std(u, axis=1)
-    std_v = np.std(v, axis=1)
-    std_w = np.std(w, axis=1)
-    ke = (0.5) * np.abs(std_u ** 2 + std_v ** 2 + std_w ** 2)
+    std_u = np.zeros(len(u))
+    std_v = np.zeros(len(u))
+    std_w = np.zeros(len(u))
+    ke = np.zeros(len(u))
 
+    for i in range(len(u)):
+        std_u[i] = sm.std(u[i], 3)
+        std_v[i] = sm.std(v[i], 3)
+        std_w[i] = sm.std(w[i], 3)
+
+    ke = (0.5) * np.abs(std_u ** 2 + std_v ** 2 + std_w ** 2)
+    
     x_exp = exp_ke_std.x1_exp
     y_exp = exp_ke_std.std_ke_exp
 
-    fig, axes1 = plt.subplots(figsize=(16, 10), dpi=180)
+    #plt.style.use('ggplot')
+        
+    fig = plt.figure(figsize=(16,10), dpi = 180)
+    axes1 = fig.add_subplot(1, 1, 1)
     axes1.set_ylabel('ke', fontsize=20)
     axes1.set_xlabel('x / L', fontsize=20)
-
-    x0 = np.array(x)
-    x1 = x0 * 1.0 / 0.15
+        
+    x0 = np.array(x)                                # adimensionalizando a coordenada x
+    x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
 
     y1 = np.array(ke)
 
-    x2 = np.mean(x1, axis=1)
+    x2 = np.zeros(len(u))
 
-    yhat = savgol_filter(y1, 33, 4)
+    dt = np.array(dt)
+    rho = np.array(rho)
+
+    for i in range(len(u)):
+        x2[i] = np.mean(x1[i])
+    
+    yhat = savgol_filter(y1, 33, 4) # window size 51, polynomial order 3
 
     X1 = np.linspace(x2.min(), x2.max(), 500)
     Y1 = yhat
 
-    if Y1.max() > y_exp.max():
-        Y11 = Y1 * 1.05
+    if (Y1.max() > y_exp.max()):
+        Y11 = Y1*1.05
     else:
-        Y11 = y_exp * 1.05
-
+        Y11 = y_exp*1.05
+    
     axes1.set_xlim([X1.min(), X1.max()])
     axes1.set_ylim([Y1.min(), Y11.max()])
-    axes1.tick_params(labelsize=20)
-    axes1.plot(x2, yhat, '-', color="black", label="Smagorinsky, Cs = 0.15")
-    axes1.scatter(x_exp, y_exp, color="none", edgecolor="black", label="Experimental")
-    axes1.legend(loc='lower center', fontsize=20)
-    axes1.grid()
-    plt.savefig('Cs_015_std_ke.jpeg', format='jpeg', figsize=(16, 10), dpi=180)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.plot(x2, yhat, '-', color="black", label="Smagorinsky , Cs =0.15")
+    plt.scatter(x_exp, y_exp, color="none", edgecolor="black", label="Experimental")
+    plt.legend(loc='lower center', fontsize=20)
+    #fig.tight_layout()
+    plt.grid()
+    plt.savefig('Cs_015_std_ke.jpeg', format='jpeg', figsize=(16,10), dpi = 180)
     plt.show()
-
     return x_exp, y_exp, x2, y1
-
 
 def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
     """
@@ -160,45 +195,115 @@ def plot_std_vel(x, vel, dt, rho, exp_std_vel, vel_i):
 
     Retorna um vetor com 34 pontos da velocidade média em função da posição.
     """
-    std_vel = np.std(vel, axis=1)
-    mean_var_vel = np.abs(std_vel)
+    if vel_i == 'u':
+        std_vel = np.zeros(len(vel))
 
-    x_exp = exp_std_vel.x1_exp
-    y_exp = exp_std_vel[f"std_{vel_i}_exp"]
+        dt = np.array(dt)
+        rho = np.array(rho)
 
-    fig, axes1 = plt.subplots(figsize=(16, 10), dpi=180)
-    axes1.set_ylabel(f"std_{vel_i}", fontsize=20)
-    axes1.set_xlabel("x / L", fontsize=20)
+        for i in range(len(vel)):
+            std_vel[i] = sm.std(vel[i], 3)
+    
+        mean_var_vel = np.abs(std_vel)
+    
+        x_exp = exp_std_vel.x1_exp
+        y_exp = exp_std_vel.std_u_exp
 
-    x0 = np.array(x)
-    x1 = x0 * 1.0 / 0.15
+        #plt.style.use('ggplot')
 
-    y1 = np.array(mean_var_vel)
+        fig = plt.figure(figsize=(16,10), dpi = 180)
+        axes1 = fig.add_subplot(1, 1, 1)
+        axes1.set_ylabel('std_u', fontsize=20)
+        axes1.set_xlabel('x / L', fontsize=20)
 
-    x2 = np.mean(x1, axis=1)
+        x0 = np.array(x)                                # adimensionalizando a coordenada x
+        x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
 
-    yhat = savgol_filter(y1, 33, 5)
+        y1 = np.array(mean_var_vel)
 
-    X1 = np.linspace(x2.min(), x2.max(), 500)
-    Y1 = yhat
+        x2 = np.zeros(len(vel))
 
-    if Y1.max() > y_exp.max():
-        Y11 = Y1 * 1.05
-    else:
-        Y11 = y_exp * 1.05
+        for i in range(len(vel)):
+            x2[i] = np.mean(x1[i])
 
-    axes1.set_xlim([X1.min(), X1.max()])
-    axes1.set_ylim([Y1.min(), Y11.max()])
-    axes1.tick_params(labelsize=20)
-    axes1.plot(x2, yhat, '-', color="black", label="Smagorinsky, Cs = 0.15")
-    axes1.scatter(x_exp, y_exp, color="none", edgecolor="black", label="Experimental")
-    axes1.legend(loc='lower center', fontsize=20)
-    axes1.grid()
-    plt.savefig(f"Cs_015_std_{vel_i}.jpeg", format='jpeg', figsize=(16, 10), dpi=180)
-    plt.show()
+        print("x2 = ", x2)
 
-    return x2, y1, x_exp, y_exp
+        yhat = savgol_filter(y1, 33, 6) # window size 51, polynomial order 3
 
+        X1 = np.linspace(x2.min(), x2.max(), 500)
+        Y1 = yhat
+
+        if (Y1.max() > y_exp.max()):
+            Y11 = Y1*1.05
+        else:
+            Y11 = y_exp*1.05
+
+        axes1.set_xlim([X1.min(), X1.max()])
+        axes1.set_ylim([Y1.min(), Y11.max()])
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
+        plt.plot(x2, yhat, '-', color="black", label="Smagorinsky , Cs =0.15")
+        plt.scatter(x_exp, y_exp, color="none", edgecolor="black", label="Experimental")
+        plt.legend(loc='best', fontsize=20)
+        #fig.tight_layout()
+        plt.grid()
+        plt.savefig('Cs_015_std_u.jpeg', format='jpeg', figsize=(16,10), dpi = 180)
+        plt.show()
+    
+    elif vel_i == 'w':
+        std_vel = np.zeros(len(vel))
+
+        dt = np.array(dt)
+        rho = np.array(rho)
+
+        for i in range(len(vel)):
+            std_vel[i] = sm.std(vel[i], 3)
+    
+        mean_var_vel = np.abs(std_vel)
+    
+        x_exp = exp_std_vel.x1_exp
+        y_exp = exp_std_vel.std_w_exp
+
+        #plt.style.use('ggplot')
+
+        fig = plt.figure(figsize=(16,10), dpi = 180)
+        axes1 = fig.add_subplot(1, 1, 1)
+        axes1.set_ylabel('std_w', fontsize=20)
+        axes1.set_xlabel('x / L', fontsize=20)
+
+        x0 = np.array(x)                                # adimensionalizando a coordenada x
+        x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
+
+        y1 = np.array(mean_var_vel)
+
+        x2 = np.zeros(len(vel))
+
+        for i in range(len(vel)):
+            x2[i] = np.mean(x1[i])
+
+        yhat = savgol_filter(y1, 33, 5) # window size 51, polynomial order 3
+
+        X1 = np.linspace(x2.min(), x2.max(), 500)
+        Y1 = yhat
+
+        if (Y1.max() > y_exp.max()):
+            Y11 = Y1*1.05
+        else:
+            Y11 = y_exp*1.05
+
+        axes1.set_xlim([X1.min(), X1.max()])
+        axes1.set_ylim([Y1.min(), Y11.max()])
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
+        plt.plot(x2, yhat, '-', color="black", label="Smagorinsky , Cs =0.15")
+        plt.scatter(x_exp, y_exp, color="none", edgecolor="black", label="Experimental")
+        plt.legend(loc='lower center', fontsize=20)
+        #fig.tight_layout()
+        plt.grid()
+        plt.savefig('Cs_015_std_w.jpeg', format='jpeg', figsize=(16,10), dpi = 180)
+        plt.show()
+
+        return x2, y1, x_exp, y_exp
 
 
 def reynolds_tensor(u_vel, v_vel, w_vel):
@@ -434,5 +539,3 @@ def numpy_polifity(x, y):
     linear_model_fn_ishi=np.poly1d(linear_model_ishi)
     print("\n regressão com numpy polifity= \n", linear_model_fn_ishi)
     
-
-
