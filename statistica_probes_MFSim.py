@@ -46,7 +46,6 @@ def plot_mean_vel(x, vel, dt, rho):
     axes1.set_xlabel('x / L', fontsize=20)
           
     x0 = np.array(x)                                # adimensionalizando a coordenada x
-    x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
     
     dt = np.array(dt)
     rho = np.array(rho)
@@ -62,7 +61,7 @@ def plot_mean_vel(x, vel, dt, rho):
 
     
     for i in range(len(vel)):
-        x2[i] = np.mean(x1[i])
+        x2[i] = np.mean(x0[i])
         y2[i] = np.mean(y1[i])    # antigo
         favre_num[i] = np.sum(dt[i] * y1[i])
         favre_den[i] = np.sum(dt[i])
@@ -134,7 +133,6 @@ def plot_std_ke(x, u, v, w, dt, rho):
     axes1.set_xlabel('x / L', fontsize=20)
         
     x0 = np.array(x)                                # adimensionalizando a coordenada x
-    x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
 
     y1 = np.array(ke)
 
@@ -144,7 +142,7 @@ def plot_std_ke(x, u, v, w, dt, rho):
     rho = np.array(rho)
 
     for i in range(len(u)):
-        x2[i] = np.mean(x1[i])
+        x2[i] = np.mean(x0[i])
     
     yhat = savgol_filter(y1, 33, 4) # window size 51, polynomial order 3
 
@@ -203,14 +201,13 @@ def plot_std_vel(x, vel, dt, rho, vel_i):
         axes1.set_xlabel('x / L', fontsize=20)
 
         x0 = np.array(x)                                # adimensionalizando a coordenada x
-        x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
 
         y1 = np.array(mean_var_vel)
 
         x2 = np.zeros(len(vel))
 
         for i in range(len(vel)):
-            x2[i] = np.mean(x1[i])
+            x2[i] = np.mean(x0[i])
 
         print("x2 = ", x2)
 
@@ -252,14 +249,13 @@ def plot_std_vel(x, vel, dt, rho, vel_i):
         axes1.set_xlabel('x / L', fontsize=20)
 
         x0 = np.array(x)                                # adimensionalizando a coordenada x
-        x1 = x0 * 1.0 / 0.15                            # para o caso que analisei, admensionalisei um comprimento de 0,15 m entre 0 e 1.
 
         y1 = np.array(mean_var_vel)
 
         x2 = np.zeros(len(vel))
 
         for i in range(len(vel)):
-            x2[i] = np.mean(x1[i])
+            x2[i] = np.mean(x0[i])
 
         yhat = savgol_filter(y1, 33, 5) # window size 51, polynomial order 3
 
