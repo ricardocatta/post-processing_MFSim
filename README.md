@@ -22,4 +22,5 @@ Portanto, para realizar a comparação dos resultados do MFSim com resultados ex
 - PLOT DOS RESULTADOS, SEM COMPARAÇÃO COM RESULTADOS:
 
 -- plot_statistical_values_MFSim.py
+
 -- statistica_probes_MFSim.py
