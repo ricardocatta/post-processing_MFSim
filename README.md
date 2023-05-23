@@ -1,6 +1,13 @@
 # post_processing_MFSim
 
-O objetivo do projeto "post_processing_MFSim" é realizar comparações entre os resultados do MFSim e resultados experimentais. Para fazer essa comparação, você deve usar os seguintes arquivos:
+O objetivo do projeto "post_processing_MFSim" é realizar comparações entre os resultados do MFSim e resultados experimentais. 
+
+- DESCRIÇÃO DO PROBLEMA: As sondas utilizadas para o problema computacional é descrita a seguir. O problema consiste de 34 sondas distribuídas ao longo do domínio. Foram fixadas 
+as posições y = 0,075 m e z = 0,25 m. As sondas variam somente na posição x, com  0 < x < 0,15 m. Portanto, para a sonda 1, temos um valor para a posição x, com y e z fixos com os 
+valores citados anteriormente. Para a sonda 2, temos outro valor de x, mas mantendo as posições y e z; e assim sucessivamente. Para cada uma das 34 sondas, temos valores para as 
+velocidades que terão a mesma quantidade de iterações feitas na simulação.
+
+Para fazer essa comparação, você deve usar os seguintes arquivos:
 
 - plot_statistical_values.py: Este é o arquivo principal que você deve executar. Ele chamará o módulo statistica_probes.py, onde estão implementadas as funções relacionadas ao processamento estatístico dos resultados.
 
