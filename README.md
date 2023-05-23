@@ -19,7 +19,7 @@ Caso precise realizar outros cálculos, como cálculo de erro relativo, erro ass
 
 Portanto, para realizar a comparação dos resultados do MFSim com resultados experimentais, utilize os arquivos mencionados acima e, se necessário, utilize também o módulo statistical_module.py para realizar outros cálculos estatísticos.
 
-- PLOT DOS RESULTADOS, SEM COMPARAÇÃO COM RESULTADOS:
+- PLOT DOS RESULTADOS SEM COMPARAÇÃO COM EXPERIMETO:
 
 -- plot_statistical_values_MFSim.py
 
